@@ -1,7 +1,9 @@
 import mysql.connector
 from pulp import *
 import sys 
-
+"""
+Utility functions for the app
+"""
 
 def getQstring(environ):
     """
@@ -70,6 +72,9 @@ def executeQuery(query):
     return retval
 
 def knapsack(budget):
+    """
+    Looking at it as a knapsack problem
+    """
     sys.setrecursionlimit(10**6) 
     data = executeQuery("""
     SELECT id, value, overall, position FROM Football.Players
@@ -82,6 +87,7 @@ def knapsack(budget):
     fb = {}
     hb = {}
     fwd = {}
+    # prep data for problem solving
     for row in data:
         playerid.append(row[0])
         point[row[0]] = row[2]
@@ -112,25 +118,29 @@ def knapsack(budget):
             fb[row[0]] = 0
             hb[row[0]] = 0
             fwd[row[0]] = 0
+    # Create problem
     prob = LpProblem("TeamBuilder",LpMaximize)
     player_vars = LpVariable.dicts("Players",playerid,0,1,LpBinary)
 
     # objective function
     prob += lpSum([point[i]*player_vars[i] for i in playerid]), "Total Cost"
-    # constraint
+    # constraints
     prob += lpSum([player_vars[i] for i in playerid]) == 11, "Total 11 Players"
     prob += lpSum([cost[i] * player_vars[i] for i in playerid]) <= budget, "Total Cost"
-    prob += lpSum([gk[i] * player_vars[i] for i in playerid]) == 1, "Only 1 GK"
-    prob += lpSum([fb[i] * player_vars[i] for i in playerid]) == 2, "Less than 4 DEF"
-    prob += lpSum([hb[i] * player_vars[i] for i in playerid]) == 3, "Less than 5 MID"
-    prob += lpSum([fwd[i] * player_vars[i] for i in playerid]) == 5, "Less than 3 STR"
+    prob += lpSum([gk[i] * player_vars[i] for i in playerid]) == 1, "Exactly 1 GK"
+    prob += lpSum([fb[i] * player_vars[i] for i in playerid]) == 2, "Exactly 2 FB"
+    prob += lpSum([hb[i] * player_vars[i] for i in playerid]) == 3, "Exactly 3 HB"
+    prob += lpSum([fwd[i] * player_vars[i] for i in playerid]) == 5, "Exactly 5 FWD"
 
     # solve
     prob.solve()
-
+    # return list of player ids in the optimal solution
     return [str(variable).split("_")[1] for variable in prob.variables() if variable.varValue > 0.0]
 
 def getTBData(retplayer):
+    """
+    Get player data from ids
+    """
     retval = executeQuery("""
     SELECT name, age, nationality, club, photo, overall, value, position FROM Football.Players
     WHERE ID IN ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})

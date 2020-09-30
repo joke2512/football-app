@@ -1,7 +1,9 @@
 from wsgiref.simple_server import make_server
 from views import search, frontpage, notFound, teamBuilder
 import mysql.connector
-
+"""
+Webapp 
+"""
 
 def app(environ, start_response):
     status = '200 OK'

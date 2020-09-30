@@ -1,6 +1,8 @@
 import mysql.connector
 import csv
-
+"""
+For DB init and data insertion
+"""
 
 mydb = mysql.connector.connect(
   host="football-db.cbjwwglbjbqg.eu-central-1.rds.amazonaws.com",

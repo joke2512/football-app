@@ -1,8 +1,13 @@
 from utils import getQstring, dbSearch, knapsack
 from templates import searchHTML, frontpageHTML, notFoundHTML, teamBuilderHTML
-
+"""
+For creating views 
+"""
 
 def search(environ):
+    """
+    Search functionality page
+    """
     qdict = getQstring(environ)
     if "query" in qdict.keys():
         data = dbSearch(qdict["query"])
@@ -12,6 +17,9 @@ def search(environ):
     return searchHTML.front()
 
 def teamBuilder(environ):
+    """
+    Teambuilder page
+    """
     qdict = getQstring(environ)
     if "query" in qdict.keys():
         data = knapsack(qdict["query"])
