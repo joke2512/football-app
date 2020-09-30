@@ -24,3 +24,5 @@ The file `teambuilderLOCAL.py` can be used to test this funcitonality.
 ### Pictures
 The pictures in the dataset all returns a 404 error, so no pictures will be displayed on the page.
 
+## Docker hub
+https://hub.docker.com/repository/docker/joke2512/football-app
