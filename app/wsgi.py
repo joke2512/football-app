@@ -1,32 +1,22 @@
 from wsgiref.simple_server import make_server
-from views import testing
+from views import search, frontpage, notFound, teamBuilder
 import mysql.connector
 
 
-# mydb = mysql.connector.connect(
-#   host="webapp_db_1",
-#   user="",
-#   password="helloworld"
-# )
-
 def app(environ, start_response):
-    response_body = [
-        f'{key}: {value}' for key, value in sorted(environ.items())
-    ]
-    response_body = '\n'.join(response_body)
-
     status = '200 OK'
-
     response_headers = [
-        ('Content-type', 'text/plain'),
+        ('Content-type', 'html'),
     ]
 
     start_response(status, response_headers)
-    if environ["PATH_INFO"] == "/hej":
-        return ["hej".encode("utf-8")]
-    if environ["PATH_INFO"] == "/testing":
-        return [testing(environ["QUERY_STRING"]).encode("utf-8")]
-    return [response_body.encode('utf-8')]
 
-# server = make_server('localhost', 8080, app=application)
-# server.serve_forever()
+    # ROUTING
+    if environ["PATH_INFO"] == "/search":
+        return [search(environ).encode("utf-8")]
+    if environ["PATH_INFO"] == "/teambuilder":
+        return [teamBuilder(environ).encode("utf-8")]
+    if environ["PATH_INFO"] == "/":
+        return [frontpage(environ).encode("utf-8")]
+    #else not found
+    return [notFound(environ).encode("utf-8")]
